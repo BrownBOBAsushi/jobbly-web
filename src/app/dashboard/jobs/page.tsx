@@ -1,159 +1,124 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { 
-  Building2, 
-  MapPin, 
-  DollarSign, 
-  Clock, 
-  Zap, 
-  ChevronRight, 
-  ArrowLeft 
-} from 'lucide-react'
+import { Brain, CheckCircle, XCircle, Loader2, Zap } from 'lucide-react'
 
-// --- MOCK DATA: The Scenarios ---
-const MOCK_JOBS = [
-  {
-    id: 'job_1',
-    title: 'Senior Full Stack Engineer',
-    company: 'TechCorp Solutions',
-    location: 'San Francisco (Remote)',
-    salary_range: '$140k - $180k',
-    type: 'Full-time',
-    posted: '2 days ago',
-    difficulty: 'Hard', // Hard negotiation
-    description: 'We are looking for a rockstar developer. We offer competitive equity but lower base salary initially.',
-    logo_color: 'bg-blue-600'
-  },
-  {
-    id: 'job_2',
-    title: 'AI Systems Architect',
-    company: 'Nebula AI',
-    location: 'New York, NY',
-    salary_range: '$160k - $220k',
-    type: 'Contract',
-    posted: '5 hours ago',
-    difficulty: 'Medium',
-    description: 'Join the next unicorn. Heavy focus on Python and LLM orchestration.',
-    logo_color: 'bg-purple-600'
-  },
-  {
-    id: 'job_3',
-    title: 'Frontend Developer',
-    company: 'StartUp Inc',
-    location: 'Austin, TX',
-    salary_range: '$90k - $120k',
-    type: 'Full-time',
-    posted: '1 week ago',
-    difficulty: 'Easy', // They are desperate
-    description: 'Rapidly growing startup needs a UI wizard. We move fast and break things.',
-    logo_color: 'bg-pink-600'
-  }
+// 1. Define the shape of a "Job Application"
+type JobStatus = 'idle' | 'processing' | 'interview' | 'rejected'
+
+interface Job {
+  id: string
+  company: string
+  role: string
+  offer: number
+  requirements: string[]
+  status: JobStatus
+  reason?: string // Why did we win or lose?
+}
+
+// Mock Data (This simulates what your Database/AI Agent returns initially)
+const INITIAL_JOBS: Job[] = [
+  { id: '1', company: 'Google', role: 'Frontend Dev', offer: 4000, requirements: ['React', 'TS'], status: 'idle' },
+  { id: '2', company: 'StartUp Inc', role: 'Full Stack', offer: 5200, requirements: ['React', 'Node'], status: 'idle' },
+  { id: '3', company: 'Amazon', role: 'Mobile Dev', offer: 6000, requirements: ['React Native'], status: 'idle' },
 ]
 
-export default function JobFeedPage() {
-  const router = useRouter()
-  const [deploying, setDeploying] = useState<string | null>(null)
+export default function Dashboard() {
+  const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS)
+  const [isGlobalLoading, setIsGlobalLoading] = useState(false)
 
-  const handleDeploy = (jobId: string) => {
-    setDeploying(jobId)
-    // Simulate "Agent Connecting" delay
-    setTimeout(() => {
-      // We will create this negotiation page next
-      router.push(`/dashboard/negotiation/${jobId}`)
-    }, 1500)
+  // PHASE 2: THE EXECUTION (The "Magic" Button Logic)
+  const handleAutoApply = async () => {
+    setIsGlobalLoading(true)
+
+    // We loop through jobs to simulate the Agent working one by one
+    const newJobs = [...jobs]
+    
+    for (let i = 0; i < newJobs.length; i++) {
+      // 1. Set individual card to "Processing"
+      newJobs[i] = { ...newJobs[i], status: 'processing' }
+      setJobs([...newJobs]) // Force render update
+
+      // 2. Simulate AI "Thinking" time (Replace this with await api.apply(job.id))
+      await new Promise(resolve => setTimeout(resolve, 1500))
+
+      // PHASE 3: THE RESULT (The Value)
+      // This logic mocks the AI's decision making based on your constraints
+      if (newJobs[i].company === 'Google') {
+        newJobs[i].status = 'rejected'
+        newJobs[i].reason = '❌ Budget Mismatch: They offer $4k, you want $5k.'
+      } else if (newJobs[i].company === 'StartUp Inc') {
+        newJobs[i].status = 'interview'
+        newJobs[i].reason = '✅ INTERVIEW SECURED: Skills match + Salary $5.2k agreed.'
+      } else {
+        newJobs[i].status = 'rejected'
+        newJobs[i].reason = '❌ Missing Skill: Application requires React Native.'
+      }
+      
+      setJobs([...newJobs]) // Update UI with final result
+    }
+
+    setIsGlobalLoading(false)
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        
-        {/* Navigation */}
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center text-gray-500 hover:text-gray-900 mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Back to Command Center
-        </button>
-
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Detected Opportunities</h1>
-          <p className="text-gray-500 mt-2">
-            Your Agent has scraped 3 high-relevance matches based on your profile.
-          </p>
+    <div className="p-8 max-w-4xl mx-auto space-y-8">
+      
+      {/* Header & Magic Button */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Job Agent Dashboard</h1>
+          <p className="text-gray-500">Your AI is ready to negotiate.</p>
         </div>
+        
+        <button
+          onClick={handleAutoApply}
+          disabled={isGlobalLoading}
+          className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white transition-all
+            ${isGlobalLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:scale-105 shadow-lg'}
+          `}
+        >
+          {isGlobalLoading ? <Loader2 className="animate-spin" /> : <Zap fill="white" />}
+          {isGlobalLoading ? 'Agent Working...' : '⚡ Auto-Apply to All'}
+        </button>
+      </div>
 
-        {/* Job List */}
-        <div className="space-y-4">
-          {MOCK_JOBS.map((job) => (
-            <div 
-              key={job.id} 
-              className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group"
-            >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Job List */}
+      <div className="grid gap-4">
+        {jobs.map((job) => (
+          <div 
+            key={job.id} 
+            className={`p-6 rounded-xl border-2 transition-all duration-500
+              ${job.status === 'idle' ? 'border-gray-100 bg-white' : ''}
+              ${job.status === 'processing' ? 'border-blue-200 bg-blue-50' : ''}
+              ${job.status === 'interview' ? 'border-green-200 bg-green-50' : ''}
+              ${job.status === 'rejected' ? 'border-red-100 bg-red-50 opacity-75' : ''}
+            `}
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-xl font-bold">{job.role} @ {job.company}</h3>
+                <p className="text-gray-600 text-sm mt-1">Offer: ${job.offer}/mo • Stack: {job.requirements.join(', ')}</p>
                 
-                {/* Job Info */}
-                <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-lg ${job.logo_color} flex items-center justify-center text-white font-bold text-xl shadow-sm`}>
-                    {job.company[0]}
+                {/* Result Message */}
+                {job.reason && (
+                  <div className={`mt-3 text-sm font-semibold flex items-center gap-2
+                    ${job.status === 'interview' ? 'text-green-700' : 'text-red-600'}
+                  `}>
+                    {job.status === 'interview' ? <CheckCircle size={16} /> : <XCircle size={16} />}
+                    {job.reason}
                   </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                      {job.title}
-                    </h2>
-                    <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
-                      <Building2 className="w-4 h-4" />
-                      <span>{job.company}</span>
-                      <span className="text-gray-300">•</span>
-                      <MapPin className="w-4 h-4" />
-                      <span>{job.location}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
-                        <DollarSign className="w-3 h-3" />
-                        {job.salary_range}
-                      </span>
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                        <Clock className="w-3 h-3" />
-                        {job.type}
-                      </span>
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        job.difficulty === 'Hard' ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'
-                      }`}>
-                        <Zap className="w-3 h-3" />
-                        Negotiation: {job.difficulty}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                )}
+              </div>
 
-                {/* Action Button */}
-                <button
-                  onClick={() => handleDeploy(job.id)}
-                  disabled={!!deploying}
-                  className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold text-white transition-all min-w-[180px] ${
-                    deploying === job.id 
-                      ? 'bg-gray-800 cursor-wait' 
-                      : 'bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-blue-500/30'
-                  }`}
-                >
-                  {deploying === job.id ? (
-                    <>Connecting...</>
-                  ) : (
-                    <>
-                      Deploy Agent
-                      <ChevronRight className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
+              {/* Status Indicator Icon */}
+              <div className="mt-2">
+                {job.status === 'processing' && <Loader2 className="animate-spin text-blue-500" />}
+                {job.status === 'idle' && <span className="text-xs text-gray-400 font-mono">WAITING</span>}
               </div>
             </div>
-          ))}
-        </div>
-
+          </div>
+        ))}
       </div>
     </div>
   )
