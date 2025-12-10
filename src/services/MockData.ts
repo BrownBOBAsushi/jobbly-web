@@ -1,4 +1,4 @@
-// src/services/mockData.ts
+// src/services/MockData.ts
 import { JobMatch, ApplicantProfile, ApplicantPreferences, ApplicantBehaviour } from '@/types';
 
 export const MOCK_USER: ApplicantProfile = {
@@ -32,6 +32,12 @@ export const MOCK_JOBS: JobMatch[] = [
     salaryRange: '$8k - $12k',
     tags: ['Web3', 'Product', 'DAO'],
     matchConfidence: 96,
+    matchDetails: {
+      skillMatch: 98,
+      cultureMatch: 92,
+      preferenceMatch: 100,
+      reason: "Your risk tolerance aligns perfectly with their DAO structure, and your salary expectations are within budget."
+    },
     postedDate: '3d ago',
     description: `
       ### About Us
@@ -51,6 +57,12 @@ export const MOCK_JOBS: JobMatch[] = [
     salaryRange: '$7k - $10k',
     tags: ['Robotics', 'Consumer Apps'],
     matchConfidence: 92,
+    matchDetails: { // <-- FIX: Added missing details
+      skillMatch: 85,
+      cultureMatch: 95,
+      preferenceMatch: 95,
+      reason: "High score on process orientation aligns with their robotics-based operations."
+    },
     postedDate: '5d ago',
     description: `We are partnered with a robotics team building the Uber for robots...`
   },
@@ -63,7 +75,13 @@ export const MOCK_JOBS: JobMatch[] = [
     employmentType: 'Contract',
     salaryRange: '$10k - $15k',
     tags: ['React', 'Next.js', 'Tailwind'],
-    matchConfidence: 88, // This one is below 90%, we might filter it out based on rules
+    matchConfidence: 88, // This one is below 90%, will be filtered out
+    matchDetails: { // <-- FIX: Added missing details
+      skillMatch: 99,
+      cultureMatch: 80,
+      preferenceMatch: 90,
+      reason: "Excellent skill match, but high autonomy preference conflicts with their strict processes."
+    },
     postedDate: '1d ago',
     description: `Leading the frontend architecture for a new hiring platform...`
   }

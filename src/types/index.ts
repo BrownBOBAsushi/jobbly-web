@@ -41,8 +41,13 @@ export interface JobMatch {
   logoUrl?: string; // Company logo placeholder
   
   // AI Matching Fields (computed, might not be in DB but returned by API)
-  matchConfidence: number; // 0 to 100
-  matchReasoning?: string; // Short AI explanation why it matched
+  matchConfidence: number; 
+  matchDetails: {
+    skillMatch: number;      // e.g. 95
+    cultureMatch: number;    // e.g. 88
+    preferenceMatch: number; // e.g. 100
+    reason: string;          // "High overlap in React skills and Remote preference."
+  };
 }
 
 // Global App State Interface
