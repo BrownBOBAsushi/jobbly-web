@@ -19,93 +19,150 @@ export default function JobDetailPanel() {
   const { matchDetails } = selectedJob;
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100 h-full flex flex-col relative">
+    <div className="bg-white rounded-3xl h-full flex flex-col relative" style={{ 
+      boxShadow: '0 2px 12px rgba(124, 58, 237, 0.06)',
+      border: '1px solid rgba(124, 58, 237, 0.1)',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif"
+    }}>
       
-      {/* Mobile Back Button (Visible only on small screens) */}
-      <div className="md:hidden p-4 border-b border-gray-100 flex items-center">
-        <button onClick={handleBack} className="flex items-center text-gray-600 hover:text-indigo-600">
+      {/* Mobile Back Button */}
+      <div className="md:hidden p-4 border-b flex items-center" style={{ borderColor: 'rgba(124, 58, 237, 0.1)' }}>
+        <button 
+          onClick={handleBack} 
+          className="flex items-center transition-colors"
+          style={{ color: '#6B7280' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#7C3AED'}
+          onMouseLeave={(e) => e.currentTarget.style.color = '#6B7280'}
+        >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Matches
         </button>
       </div>
 
-      <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-        <div className="flex justify-between items-start mb-4">
+      <div className="p-8 border-b" style={{ borderColor: 'rgba(124, 58, 237, 0.1)', background: 'rgba(124, 58, 237, 0.01)' }}>
+        <div className="flex justify-between items-start mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{selectedJob.title}</h2>
-            <div className="flex items-center text-gray-600 text-sm mt-1">
-              <Briefcase className="w-4 h-4 mr-1" />
+            <h2 className="text-3xl font-bold mb-2" style={{ color: '#5B21B6' }}>{selectedJob.title}</h2>
+            <div className="flex items-center text-sm mt-1" style={{ color: '#6B7280' }}>
+              <Briefcase className="w-4 h-4 mr-1.5" />
               <span>{selectedJob.company}</span>
-              <MapPin className="w-4 h-4 ml-3 mr-1" />
+              <MapPin className="w-4 h-4 ml-4 mr-1.5" />
               <span>{selectedJob.location}</span>
             </div>
           </div>
-          <Badge variant="primary" className="text-lg py-1 px-4">
+          <div className="px-6 py-3 rounded-2xl font-bold text-3xl" style={{
+            background: selectedJob.matchConfidence >= 80
+              ? 'rgba(16, 185, 129, 0.1)'
+              : selectedJob.matchConfidence >= 60
+              ? 'rgba(251, 191, 36, 0.1)'
+              : 'rgba(107, 114, 128, 0.1)',
+            color: selectedJob.matchConfidence >= 80
+              ? '#10B981'
+              : selectedJob.matchConfidence >= 60
+              ? '#FBBF24'
+              : '#6B7280'
+          }}>
             {selectedJob.matchConfidence}%
-          </Badge>
+          </div>
         </div>
 
-        {/* --- STRATEGIC EXTENSION: Confidence Breakdown Card --- */}
-        <div className="bg-white p-4 rounded-lg border border-indigo-100 shadow-sm mb-4">
-          <div className="flex items-center gap-2 mb-3">
-             <Zap className="w-4 h-4 text-indigo-500" />
-             <span className="text-sm font-semibold text-gray-900">Why you matched</span>
+        {/* Confidence Breakdown Card */}
+        <div className="p-6 rounded-2xl mb-4" style={{ background: 'rgba(124, 58, 237, 0.02)', border: '1px solid rgba(124, 58, 237, 0.1)' }}>
+          <div className="flex items-center gap-2 mb-4">
+             <Zap className="w-5 h-5" style={{ color: '#7C3AED' }} />
+             <span className="text-sm font-semibold" style={{ color: '#5B21B6' }}>Why you matched</span>
           </div>
           
-          <div className="grid grid-cols-3 gap-2 mb-3">
-             <div className="text-center p-2 bg-gray-50 rounded">
-                <div className="text-xs text-gray-500">Skills</div>
-                <div className="font-bold text-gray-900">{matchDetails?.skillMatch}%</div>
+          <div className="grid grid-cols-3 gap-4 mb-4">
+             <div className="text-center p-4 rounded-xl" style={{ background: 'rgba(124, 58, 237, 0.05)' }}>
+                <div className="text-sm mb-1" style={{ color: '#6B7280' }}>Skills</div>
+                <div className="font-bold text-2xl" style={{ color: '#1F2937' }}>{matchDetails?.skillMatch}%</div>
              </div>
-             <div className="text-center p-2 bg-gray-50 rounded">
-                <div className="text-xs text-gray-500">Culture</div>
-                <div className="font-bold text-gray-900">{matchDetails?.cultureMatch}%</div>
+             <div className="text-center p-4 rounded-xl" style={{ background: 'rgba(124, 58, 237, 0.05)' }}>
+                <div className="text-sm mb-1" style={{ color: '#6B7280' }}>Culture</div>
+                <div className="font-bold text-2xl" style={{ color: '#1F2937' }}>{matchDetails?.cultureMatch}%</div>
              </div>
-             <div className="text-center p-2 bg-gray-50 rounded">
-                <div className="text-xs text-gray-500">Prefs</div>
-                <div className="font-bold text-gray-900">{matchDetails?.preferenceMatch}%</div>
+             <div className="text-center p-4 rounded-xl" style={{ background: 'rgba(124, 58, 237, 0.05)' }}>
+                <div className="text-sm mb-1" style={{ color: '#6B7280' }}>Prefs</div>
+                <div className="font-bold text-2xl" style={{ color: '#1F2937' }}>{matchDetails?.preferenceMatch}%</div>
              </div>
           </div>
-          <p className="text-xs text-gray-600 italic">
+          <p className="text-sm italic" style={{ color: '#6B7280', lineHeight: '1.6' }}>
             "{matchDetails?.reason}"
           </p>
         </div>
-        {/* ----------------------------------------------------- */}
 
-        {/* 🟢 NEW: MatchGrid Component Added Here 🟢 */}
-        {/* This renders the detailed Skill/Behaviour boxes */}
         <MatchGrid />
 
       </div>
 
-      {/* Main Job Description Body with Markdown */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <h3 className="text-lg font-semibold mb-3 text-gray-900">Job Description</h3>
-        <div className="prose prose-sm max-w-none text-gray-700">
-          {/* If using react-markdown */}
-          <ReactMarkdown>{selectedJob.description}</ReactMarkdown> 
-          
-          {/* OR fallback if you didn't install it: */}
-          {/* <div className="whitespace-pre-line">{selectedJob.description}</div> */}
+      {/* Main Job Description Body */}
+      <div className="flex-1 overflow-y-auto p-8">
+        <h3 className="text-xl font-semibold mb-4" style={{ color: '#5B21B6' }}>Job Description</h3>
+        <div className="prose prose-sm max-w-none" style={{ color: '#1F2937', lineHeight: '1.6' }}>
+          <ReactMarkdown>{selectedJob.description}</ReactMarkdown>
         </div>
       </div>
 
-      {/* Footer Actions: Status Indicator instead of Apply Button */}
-      <div className="p-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
+      {/* Footer Actions */}
+      <div className="p-6 border-t flex items-center justify-between" style={{ borderColor: 'rgba(124, 58, 237, 0.1)', background: 'rgba(124, 58, 237, 0.01)' }}>
         
-        {/* Save Button (Still useful for bookmarking) */}
-        <button className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+        <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all hover:transform hover:-translate-y-0.5" style={{ 
+          background: '#F9FAFB',
+          color: '#1F2937',
+          border: '1px solid rgba(124, 58, 237, 0.1)',
+          boxShadow: '0 1px 2px rgba(124, 58, 237, 0.05)'
+        }}>
           <Bookmark className="w-4 h-4" />
           <span>Save for later</span>
         </button>
 
         {/* Status Indicator */}
-        <div className="flex items-center space-x-3 bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
-           <div className="flex items-center justify-center w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-           <span className="text-sm font-medium text-indigo-900">
-             Match Shared with HR • Awaiting Contact
-           </span>
-        </div>
+        {selectedJob.status === 'interview_scheduled' && selectedJob.matchConfidence >= 70 ? (
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl" style={{ 
+            background: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+            color: '#10B981'
+          }}>
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            <span className="text-sm font-medium">
+              Match Shared with HR • Awaiting Contact
+            </span>
+          </div>
+        ) : selectedJob.status === 'interview_scheduled' && selectedJob.matchConfidence < 70 ? (
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl" style={{ 
+            background: 'rgba(251, 191, 36, 0.1)',
+            border: '1px solid rgba(251, 191, 36, 0.2)',
+            color: '#FBBF24'
+          }}>
+            <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+            <span className="text-sm font-medium">
+              Under Review • Low Match Score
+            </span>
+          </div>
+        ) : selectedJob.matchConfidence >= 70 ? (
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl" style={{ 
+            background: 'rgba(124, 58, 237, 0.1)',
+            border: '1px solid rgba(124, 58, 237, 0.2)',
+            color: '#7C3AED'
+          }}>
+            <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+            <span className="text-sm font-medium">
+              Strong Match • Pending HR Review
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl" style={{ 
+            background: 'rgba(107, 114, 128, 0.1)',
+            border: '1px solid rgba(107, 114, 128, 0.2)',
+            color: '#6B7280'
+          }}>
+            <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+            <span className="text-sm font-medium">
+              Match Pending Review ({selectedJob.matchConfidence}% match)
+            </span>
+          </div>
+        )}
 
       </div>
     </div>

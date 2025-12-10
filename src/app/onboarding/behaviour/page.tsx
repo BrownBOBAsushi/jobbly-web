@@ -2,23 +2,71 @@
 
 import { useOnboarding } from '../../../components/onboarding/OnboardingContext';
 import { useRouter } from 'next/navigation';
-import { BehaviourChoice } from '../../../components/onboarding/BehaviourChoice'; // <--- NEW IMPORT
+import { BehaviourChoice } from '../../../components/onboarding/BehaviourChoice';
 import { BehaviourState } from '../../../components/onboarding/types';
+import { useState } from 'react';
 
 export default function BehaviourPage() {
   const router = useRouter();
-  const { data, updateBehaviour, markStepComplete, finalSubmit } = useOnboarding();
+  const { data, updateBehaviour, markStepComplete } = useOnboarding();
   const { behaviour } = data;
+  const [saving, setSaving] = useState(false);
+  const [matching, setMatching] = useState(false);
 
   const handleBack = () => {
     router.push('/onboarding/preference');
   };
 
-  const handleFinish = () => {
-    markStepComplete(3);
-    finalSubmit(); // Triggers the console log & alert
-    // In a real app, you might redirect to a dashboard here:
-    // router.push('/dashboard'); 
+  const handleFinish = async () => {
+    setSaving(true);
+    try {
+      // Save behaviour answers
+      const response = await fetch('/api/applicant/behaviour', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Include cookies for authentication
+        body: JSON.stringify({
+          independent_vs_team: behaviour.independentVsTeam,
+          structured_vs_open: behaviour.structuredVsOpen,
+          fast_vs_steady: behaviour.fastVsSteady,
+          quick_vs_thorough: behaviour.quickVsThorough,
+          hands_on_vs_strategic: behaviour.handsOnVsStrategic,
+          feedback_vs_autonomy: behaviour.feedbackVsAutonomy,
+          innovation_vs_process: behaviour.innovationVsProcess,
+          flexible_vs_schedule: behaviour.flexibleVsSchedule,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save behaviour');
+      }
+
+      // Trigger matching
+      setMatching(true);
+      const matchResponse = await fetch('/api/applicant/start-matching', {
+        method: 'POST',
+        credentials: 'include', // Include cookies for authentication
+      });
+
+      if (!matchResponse.ok) {
+        const error = await matchResponse.json();
+        throw new Error(error.error || 'Failed to start matching');
+      }
+
+      const matchData = await matchResponse.json();
+      console.log('Matching completed:', matchData);
+
+      markStepComplete(3);
+      // Redirect to dashboard
+      router.push('/dashboard');
+    } catch (error: any) {
+      console.error('Finish onboarding error:', error);
+      alert('Error completing onboarding: ' + error.message);
+    } finally {
+      setSaving(false);
+      setMatching(false);
+    }
   };
 
   // Helper to update specific fields
@@ -105,9 +153,14 @@ export default function BehaviourPage() {
         
         <button
           onClick={handleFinish}
-          className="px-8 py-3 text-lg font-semibold rounded-lg bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition-all"
+          disabled={saving || matching}
+          className={`px-8 py-3 text-lg font-semibold rounded-lg transition-all ${
+            saving || matching
+              ? 'bg-gray-400 text-white cursor-not-allowed'
+              : 'bg-indigo-600 text-white shadow-md hover:bg-indigo-700'
+          }`}
         >
-          Save & Start Matching
+          {matching ? 'Matching...' : saving ? 'Saving...' : 'Save & Start Matching'}
         </button>
       </footer>
     </div>

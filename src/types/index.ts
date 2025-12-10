@@ -48,6 +48,10 @@ export interface JobMatch {
     preferenceMatch: number; // e.g. 100
     reason: string;          // "High overlap in React skills and Remote preference."
   };
+  
+  // Match status from database
+  status?: 'pending' | 'interview_scheduled' | 'rejected' | 'accepted';
+  interviewScheduledAt?: string | null;
 }
 
 // Global App State Interface

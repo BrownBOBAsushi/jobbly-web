@@ -5,7 +5,8 @@ import { useOnboarding } from '../../../components/onboarding/OnboardingContext'
 import { DragAndDropUpload } from '../../../components/onboarding/DragAndDropUpload';
 import { FaCamera, FaUserCircle } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, useRef } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 // Max file size: 5MB for individual files, as specified
 const MAX_SIZE_BYTES = 5 * 1024 * 1024;
@@ -40,14 +41,53 @@ export default function ProfilePage() {
     }
   };
 
+  const [uploading, setUploading] = useState(false);
+
   const isStepComplete = !!(profile.resume && profile.coverLetter); // Minimal completion logic
 
-  const handleAiAnalyze = () => {
-    if (isStepComplete) {
+  const handleAiAnalyze = async () => {
+    if (!isStepComplete) {
+      alert("Please upload your Resume and Cover Letter to proceed.");
+      return;
+    }
+
+    // Check if user is logged in
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      alert('Please log in to continue. Redirecting to login...');
+      router.push('/');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Upload files to backend
+      const formData = new FormData();
+      if (profile.resume) formData.append('resume', profile.resume);
+      if (profile.coverLetter) formData.append('coverLetter', profile.coverLetter);
+      if (profile.photo) formData.append('photo', profile.photo);
+
+      const response = await fetch('/api/applicant/profile', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include', // Include cookies for authentication
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to upload profile');
+      }
+
+      const data = await response.json();
+      console.log('Profile uploaded successfully:', data);
+
       markStepComplete(1); // Mark step 1 complete
       router.push('/onboarding/preference'); // Go to the next step
-    } else {
-      alert("Please upload your Resume and Cover Letter to proceed.");
+    } catch (error: any) {
+      console.error('Profile upload error:', error);
+      alert('Error uploading profile: ' + error.message);
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -138,16 +178,16 @@ export default function ProfilePage() {
       <footer className="mt-10 pt-6 border-t flex justify-end">
         <button
           onClick={handleAiAnalyze}
-          disabled={!isStepComplete}
+          disabled={!isStepComplete || uploading}
           className={`
             px-8 py-3 text-lg font-semibold rounded-lg transition-all duration-200
-            ${isStepComplete
+            ${isStepComplete && !uploading
               ? 'bg-indigo-600 text-white shadow-md hover:bg-indigo-700'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }
           `}
         >
-          Analyze Resume with AI
+          {uploading ? 'Uploading...' : 'Analyze Resume with AI'}
         </button>
       </footer>
     </div>

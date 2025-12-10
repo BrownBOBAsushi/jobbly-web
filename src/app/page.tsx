@@ -8,7 +8,7 @@ import { Briefcase, User, Loader2, Lock } from 'lucide-react'
 export default function LandingPage() {
   const [role, setRole] = useState<'applicant' | 'hr' | null>(null)
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('') // New Password Field
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const router = useRouter()
@@ -19,41 +19,63 @@ export default function LandingPage() {
     setMessage('')
 
     try {
-      // STRATEGY: Try to Sign Up first (to ensure Profile is created with Role)
-      // If user exists, this will fail, and we catch it to perform Sign In.
-      
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { role: role }, // PASS ROLE METADATA HERE
+          data: { role: role },
         },
       })
 
       if (signUpError) {
-        // If error is "User already registered", try logging in
-        if (signUpError.message.includes("already registered") || signUpError.status === 400) {
-           const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        if (signUpError.message.includes("already registered") || signUpError.status === 400 || signUpError.status === 422) {
+          console.log('User exists, attempting sign-in...');
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
             email,
             password,
           })
           
-          if (signInError) throw signInError
+          if (signInError) {
+            console.error('Sign-in error:', signInError);
+            throw signInError
+          }
           
-          // Login Success
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+          if (sessionError || !session) {
+            console.error('Session error:', sessionError);
+            throw new Error('Failed to create session. Please try again.');
+          }
+          
+          console.log('Sign-in successful, session created');
           setMessage('Welcome back! Redirecting...')
-          router.refresh() // Sync server cookies
-          router.push('/dashboard')
+          await new Promise(resolve => setTimeout(resolve, 500))
+          router.refresh()
+          if (role === 'applicant') {
+            router.push('/onboarding/profile')
+          } else {
+            router.push('/hr/onboarding')
+          }
           return
         } else {
           throw signUpError
         }
       }
 
-      // Signup Success
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        console.error('Session error after signup:', sessionError);
+        throw new Error('Account created but session failed. Please try logging in.');
+      }
+      
+      console.log('Signup successful, session created');
       setMessage('Account created! Redirecting...')
+      await new Promise(resolve => setTimeout(resolve, 500))
       router.refresh()
-      router.push('/dashboard')
+      if (role === 'applicant') {
+        router.push('/onboarding/profile')
+      } else {
+        router.push('/hr/onboarding')
+      }
 
     } catch (err: any) {
       setMessage('Error: ' + err.message)
@@ -63,108 +85,208 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 p-4">
-      {/* Header */}
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-white mb-2">
-          JOBBLY <span className="text-red-500 text-sm align-top">DEV_MODE</span>
-        </h1>
-        <p className="text-gray-400">Agentic Negotiation Platform (Backdoor Access)</p>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ 
+      background: 'linear-gradient(180deg, #FAF5FF 0%, #FFFFFF 100%)',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif"
+    }}>
+      {/* Logo */}
+      <div className="flex items-center gap-3 mb-16">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ 
+          background: 'linear-gradient(135deg, #7C3AED 0%, #EC4899 100%)',
+          transform: 'rotate(45deg)'
+        }}>
+          <div className="w-6 h-6 border-2 border-white rounded" style={{ transform: 'rotate(-45deg)' }}></div>
+        </div>
+        <span className="text-2xl font-bold" style={{ color: '#1F2937' }}>SwiftJobs</span>
       </div>
 
-      {/* Card Container */}
-      <div className="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700">
-        
-        {/* STATE 1: ROLE SELECTION */}
-        {!role ? (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-center text-white">
-              Select Role
+      {/* Hero Section */}
+      <div className="text-center mb-16 max-w-3xl">
+        <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{
+          background: 'linear-gradient(135deg, #7C3AED 0%, #EC4899 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          lineHeight: '1.1',
+          letterSpacing: '-0.02em'
+        }}>
+          Find Your Perfect Match
+        </h1>
+        <p className="text-xl" style={{ color: '#6B7280', lineHeight: '1.6', maxWidth: '600px', margin: '0 auto' }}>
+          Connect talented professionals with opportunities that truly fit. Powered by AI matching.
+        </p>
+      </div>
+
+      {/* User Type Cards */}
+      {!role ? (
+        <div className="flex flex-col md:flex-row gap-8 max-w-4xl w-full">
+          <button
+            onClick={() => setRole('applicant')}
+            className="flex-1 max-w-md bg-white rounded-3xl p-12 text-center transition-all hover:transform hover:-translate-y-1"
+            style={{
+              boxShadow: '0 4px 20px rgba(124, 58, 237, 0.08)',
+              border: '1px solid rgba(124, 58, 237, 0.1)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 8px 32px rgba(124, 58, 237, 0.15)';
+              e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(124, 58, 237, 0.08)';
+              e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.1)';
+            }}
+          >
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(124, 58, 237, 0.15)' }}>
+              <User className="w-10 h-10" style={{ color: '#7C3AED' }} />
+            </div>
+            <h2 className="text-2xl font-semibold mb-3" style={{ color: '#1F2937' }}>Job Seeker</h2>
+            <p className="text-base" style={{ color: '#6B7280', lineHeight: '1.6' }}>
+              Discover opportunities that match your skills, culture, and preferences
+            </p>
+          </button>
+
+          <button
+            onClick={() => setRole('hr')}
+            className="flex-1 max-w-md bg-white rounded-3xl p-12 text-center transition-all hover:transform hover:-translate-y-1"
+            style={{
+              boxShadow: '0 4px 20px rgba(124, 58, 237, 0.08)',
+              border: '1px solid rgba(124, 58, 237, 0.1)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 8px 32px rgba(124, 58, 237, 0.15)';
+              e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(124, 58, 237, 0.08)';
+              e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.1)';
+            }}
+          >
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(236, 72, 153, 0.15)' }}>
+              <Briefcase className="w-10 h-10" style={{ color: '#EC4899' }} />
+            </div>
+            <h2 className="text-2xl font-semibold mb-3" style={{ color: '#1F2937' }}>Hiring Manager</h2>
+            <p className="text-base" style={{ color: '#6B7280', lineHeight: '1.6' }}>
+              Find the perfect candidates who align with your team culture and requirements
+            </p>
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white rounded-3xl p-8 w-full max-w-md transition-all" style={{
+          boxShadow: '0 4px 20px rgba(124, 58, 237, 0.08)',
+          border: '1px solid rgba(124, 58, 237, 0.1)'
+        }}>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold" style={{ color: '#5B21B6' }}>
+              {role === 'applicant' ? 'Job Seeker' : 'Hiring Manager'} Access
             </h2>
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                onClick={() => setRole('applicant')}
-                className="flex flex-col items-center justify-center p-6 border-2 border-gray-700 rounded-xl hover:border-blue-500 hover:bg-gray-700 transition-all group"
-              >
-                <User className="w-8 h-8 text-gray-500 group-hover:text-blue-500 mb-3" />
-                <span className="font-medium text-gray-300 group-hover:text-white">Applicant</span>
-              </button>
-
-              <button
-                onClick={() => setRole('hr')}
-                className="flex flex-col items-center justify-center p-6 border-2 border-gray-700 rounded-xl hover:border-pink-500 hover:bg-gray-700 transition-all group"
-              >
-                <Briefcase className="w-8 h-8 text-gray-500 group-hover:text-pink-500 mb-3" />
-                <span className="font-medium text-gray-300 group-hover:text-white">HR / Hirer</span>
-              </button>
-            </div>
+            <button 
+              onClick={() => setRole(null)} 
+              className="text-sm font-medium transition-colors"
+              style={{ color: '#6B7280' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#7C3AED'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#6B7280'}
+            >
+              Change
+            </button>
           </div>
-        ) : (
-          /* STATE 2: PASSWORD LOGIN FORM */
-          <div className="space-y-6 fade-in">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-white">
-                {role === 'applicant' ? 'Applicant' : 'HR'} Access
-              </h2>
-              <button onClick={() => setRole(null)} className="text-sm text-gray-500 hover:text-gray-300">
-                Change
-              </button>
+
+          <form onSubmit={handleDevLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#1F2937' }}>Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 transition-all focus:outline-none"
+                style={{
+                  background: '#FFFFFF',
+                  borderColor: 'rgba(124, 58, 237, 0.2)',
+                  color: '#1F2937'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#7C3AED';
+                  e.currentTarget.style.boxShadow = '0 0 0 4px rgba(124, 58, 237, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.2)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                placeholder="dev@swiftjobs.com"
+              />
             </div>
 
-            <form onSubmit={handleDevLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#1F2937' }}>Password</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: '#9CA3AF' }} />
                 <input
-                  type="email"
+                  type="password"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="dev@jobbly.com"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 rounded-xl border-2 transition-all focus:outline-none"
+                  style={{
+                    background: '#FFFFFF',
+                    borderColor: 'rgba(124, 58, 237, 0.2)',
+                    color: '#1F2937'
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = '#7C3AED';
+                    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(124, 58, 237, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.2)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                  placeholder="••••••••"
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 px-6 rounded-xl font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:transform hover:-translate-y-0.5"
+              style={{
+                background: 'linear-gradient(135deg, #7C3AED 0%, #EC4899 100%)',
+                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(124, 58, 237, 0.35)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.25)';
+                }
+              }}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" /> Authenticating...
+                </span>
+              ) : (
+                'Enter Dev Mode'
+              )}
+            </button>
+          </form>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all ${
-                  role === 'applicant' 
-                    ? 'bg-blue-600 hover:bg-blue-700' 
-                    : 'bg-pink-600 hover:bg-pink-700'
-                }`}
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" /> Authenticating...
-                  </span>
-                ) : (
-                  'Enter Dev Mode'
-                )}
-              </button>
-            </form>
+          {message && (
+            <div className={`mt-4 p-4 rounded-xl text-sm text-center ${
+              message.includes('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
+            }`}>
+              {message}
+            </div>
+          )}
+        </div>
+      )}
 
-            {message && (
-              <div className={`p-3 rounded-lg text-sm text-center ${message.includes('Error') ? 'bg-red-900/50 text-red-200' : 'bg-green-900/50 text-green-200'}`}>
-                {message}
-              </div>
-            )}
-          </div>
-        )}
+      {/* Dev Mode Badge */}
+      <div className="mt-8">
+        <span className="px-3 py-1 rounded-lg text-xs font-medium" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#EF4444' }}>
+          DEV_MODE
+        </span>
       </div>
     </div>
   )

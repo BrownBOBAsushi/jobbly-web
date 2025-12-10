@@ -1,11 +1,10 @@
 // src/lib/supabase.ts
-import { createClient } from '@supabase/supabase-js'
+// Client-side Supabase client for browser use
+// Uses SSR package for proper cookie handling in Next.js
+
+import { createBrowserClient } from '@supabase/ssr'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    flowType: 'pkce', // <--- FORCE PKCE (Ensures we get ?code= instead of #access_token=)
-  },
-})
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)

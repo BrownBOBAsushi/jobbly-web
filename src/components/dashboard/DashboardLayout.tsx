@@ -10,11 +10,14 @@ export default function DashboardLayout() {
   const { selectedJobId } = useApp(); // Get state
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col" style={{ 
+      background: '#FAF5FF',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif"
+    }}>
       <DashboardHeader />
       
-      <main className="flex-1 overflow-hidden p-4 relative">
-        <div className="h-full grid grid-cols-12 gap-4">
+      <main className="flex-1 overflow-hidden p-6 relative">
+        <div className="h-full grid grid-cols-12 gap-6">
           
           {/* LEFT: Profile (Hidden on small mobile if viewing a job, optional tweak) */}
           <div className="hidden lg:block lg:col-span-3 h-full overflow-y-auto">

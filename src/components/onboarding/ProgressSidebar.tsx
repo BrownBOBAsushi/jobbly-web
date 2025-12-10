@@ -27,19 +27,26 @@ export const ProgressSidebar: React.FC = () => {
   const progressPercentage = Math.round((completedSteps / totalSteps) * 100);
 
   return (
-    <div className="flex flex-col h-full p-6 bg-white border-r border-gray-100 shadow-xl/5 sm:w-1/4 lg:w-64">
-      <div className="mb-8 p-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-800">Your Progress</h3>
-        <div className="flex items-center justify-between mt-2">
-          <p className="text-xl font-bold text-indigo-600">
+    <div className="flex flex-col h-full p-6 bg-white border-r sm:w-1/4 lg:w-64" style={{ 
+      borderColor: 'rgba(124, 58, 237, 0.1)',
+      boxShadow: '0 2px 12px rgba(124, 58, 237, 0.06)',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif"
+    }}>
+      <div className="mb-8 p-4 border-b" style={{ borderColor: 'rgba(124, 58, 237, 0.1)' }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: '#5B21B6' }}>Your Progress</h3>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xl font-bold" style={{ color: '#7C3AED' }}>
             {progressPercentage}% Complete
           </p>
-          <div className="w-full h-2 ml-4 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-indigo-600 transition-all duration-500 ease-out"
-              style={{ width: `${progressPercentage}%` }}
-            />
-          </div>
+        </div>
+        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(124, 58, 237, 0.1)' }}>
+          <div
+            className="h-full transition-all duration-500 ease-out rounded-full"
+            style={{ 
+              width: `${progressPercentage}%`,
+              background: 'linear-gradient(135deg, #7C3AED 0%, #EC4899 100%)'
+            }}
+          />
         </div>
       </div>
 
@@ -48,22 +55,29 @@ export const ProgressSidebar: React.FC = () => {
           const isActive = pathname === step.path;
           const isAccessible = step.isCompleted || isActive;
           
-          let linkClasses = 'flex items-center p-3 text-sm font-medium rounded-lg transition-colors duration-200 ';
-
-          if (isActive) {
-            linkClasses += 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600 shadow-sm';
-          } else if (step.isCompleted) {
-            linkClasses += 'text-gray-600 hover:bg-gray-50';
-          } else {
-            linkClasses += 'text-gray-400 cursor-not-allowed';
-          }
+          const linkStyle: React.CSSProperties = {
+            display: 'flex',
+            alignItems: 'center',
+            padding: '12px',
+            fontSize: '0.875rem',
+            fontWeight: isActive ? 600 : 500,
+            borderRadius: '12px',
+            transition: 'all 0.2s ease',
+            borderLeft: isActive ? '4px solid #7C3AED' : 'none',
+            background: isActive ? 'rgba(124, 58, 237, 0.05)' : 'transparent',
+            color: isActive ? '#7C3AED' : (step.isCompleted ? '#6B7280' : '#9CA3AF'),
+            boxShadow: isActive ? '0 2px 12px rgba(124, 58, 237, 0.06)' : 'none',
+            cursor: isAccessible ? 'pointer' : 'not-allowed'
+          };
 
           const StepContent = (
             <>
               <StepIcon isActive={isActive} isCompleted={step.isCompleted} />
               <div className="ml-3 flex flex-col">
-                <span className={isActive ? 'font-semibold' : ''}>{step.label}</span>
-                <span className={`text-xs ${isActive ? 'text-indigo-500' : step.isCompleted ? 'text-green-500' : 'text-gray-400'}`}>
+                <span style={{ color: isActive ? '#7C3AED' : (step.isCompleted ? '#1F2937' : '#9CA3AF') }}>{step.label}</span>
+                <span className="text-xs" style={{ 
+                  color: isActive ? '#7C3AED' : (step.isCompleted ? '#10B981' : '#9CA3AF')
+                }}>
                   {step.isCompleted ? 'Completed' : (isActive ? 'Current' : 'Not Started')}
                 </span>
               </div>
@@ -73,11 +87,19 @@ export const ProgressSidebar: React.FC = () => {
           return (
             <div key={step.id}>
               {isAccessible ? (
-                <Link href={step.path} className={linkClasses}>
+                <Link href={step.path} style={linkStyle} onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'rgba(124, 58, 237, 0.02)';
+                  }
+                }} onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'transparent';
+                  }
+                }}>
                   {StepContent}
                 </Link>
               ) : (
-                <div className={linkClasses}>
+                <div style={linkStyle}>
                   {StepContent}
                 </div>
               )}
@@ -86,9 +108,9 @@ export const ProgressSidebar: React.FC = () => {
         })}
       </nav>
       
-      <div className="mt-8 pt-4 border-t border-gray-200">
-        <h4 className="text-sm font-semibold text-gray-500 mb-2">Helpful Tips</h4>
-        <ul className="text-xs text-gray-500 space-y-1 list-disc list-inside">
+      <div className="mt-8 pt-4 border-t" style={{ borderColor: 'rgba(124, 58, 237, 0.1)' }}>
+        <h4 className="text-sm font-semibold mb-2" style={{ color: '#6B7280' }}>Helpful Tips</h4>
+        <ul className="text-xs space-y-1 list-disc list-inside" style={{ color: '#6B7280' }}>
           <li>Start with your most recent experience.</li>
           <li>Ensure all fields are accurate.</li>
         </ul>

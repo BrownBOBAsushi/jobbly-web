@@ -27,8 +27,8 @@ export default function JobCard({ job, isSelected, onSelect }: JobCardProps) {
       <p className="text-sm text-gray-500 mb-2">{job.company} - {job.location}</p>
       
       <div className="flex flex-wrap items-center gap-2 mt-2">
-        {/* Confidence Badge */}
-        <Badge variant={badgeVariant}>
+        {/* Confidence Badge - Made Bigger */}
+        <Badge variant={badgeVariant} className="text-base font-bold px-3 py-1.5">
           {job.matchConfidence}% Match
         </Badge>
         

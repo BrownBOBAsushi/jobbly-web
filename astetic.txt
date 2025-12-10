@@ -1,0 +1,761 @@
+ You are redesigning the SwiftJobs application frontend to match the attached design specifications. Follow these instructions EXACTLY to achieve a zen, modern, and professional interface.
+
+## OVERALL DESIGN PHILOSOPHY
+
+Create a calm, confident, and effortlessly modern interface that balances "Stripe meets Notion" aesthetics - clean minimalism with just enough personality to feel human, not corporate. The design should feel like a breath of fresh air: spacious, uncluttered, and trustworthy.
+
+Core principles:
+- Zen Minimalism: Generous whitespace, no visual clutter, every element serves a clear purpose
+- Soft Gradients: Purple-to-pink gradient accents create warmth without overwhelming
+- Approachable Professionalism: Friendly but serious - this is about careers, not games
+- Subtle Depth: Soft shadows and gentle curves suggest layers without heaviness
+- Confident Simplicity: "We're so good, we don't need to shout"
+
+---
+
+## COLOR PALETTE (EXACT VALUES)
+
+### Primary Colors
+- **Brand Purple**: #7C3AED (rgb(124, 58, 237)) - Main brand color, use sparingly for key CTAs
+- **Brand Pink**: #EC4899 (rgb(236, 72, 153)) - Accent color for gradients and highlights
+- **Deep Purple (Text)**: #5B21B6 (rgb(91, 33, 182)) - For primary headings and important text
+
+### Background Colors
+- **Primary Background**: #FAF5FF (rgb(250, 245, 255)) - Very light purple tint, almost white but warmer
+- **Card Background**: #FFFFFF (rgb(255, 255, 255)) - Pure white for cards and content containers
+- **Elevated Surface**: #F9FAFB (rgb(249, 250, 251)) - Subtle off-white for elevated elements
+
+### Text Colors
+- **Primary Text**: #1F2937 (rgb(31, 41, 55)) - Dark gray, almost black, for body text
+- **Secondary Text**: #6B7280 (rgb(107, 114, 128)) - Medium gray for supporting text
+- **Tertiary Text**: #9CA3AF (rgb(156, 163, 175)) - Light gray for placeholders and hints
+- **Purple Text**: #7C3AED (rgb(124, 58, 237)) - For links and interactive elements
+
+### Gradient Definitions
+```css
+.gradient-primary {
+  background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+}
+
+.gradient-soft {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+```
+
+### Icon Colors
+- **Upload Icon (Purple)**: #A78BFA (rgb(167, 139, 250)) - Lighter purple for upload cloud icon
+- **Document Icon (Pink)**: #EC4899 (rgb(236, 72, 153)) - Pink for document/cover letter icon
+- **Profile Icon (Purple)**: #7C3AED (rgb(124, 58, 237)) - Standard purple for profile/user icon
+- **Certificate Icon (Green)**: #10B981 (rgb(16, 185, 129)) - Success green for verification checkmark
+- **Job Seeker Icon (Purple)**: #A78BFA (rgb(167, 139, 250)) - Soft purple for job seeker avatar
+- **Hiring Manager Icon (Pink)**: #F9A8D4 (rgb(249, 168, 212)) - Soft pink for hiring manager briefcase
+
+---
+
+## TYPOGRAPHY SYSTEM
+
+### Font Family
+```css
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+```
+
+### Font Sizes & Weights
+```css
+/* Hero Headlines (Landing Page) */
+.text-hero {
+  font-size: 3.5rem; /* 56px */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* Large Headlines */
+.text-h1 {
+  font-size: 2rem; /* 32px */
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* Section Headers */
+.text-h2 {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Card Titles */
+.text-h3 {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Body Text Large */
+.text-lg {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Body Text Default */
+.text-base {
+  font-size: 1rem; /* 16px */
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Small Text */
+.text-sm {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Tiny Text (Labels, Hints) */
+.text-xs {
+  font-size: 0.75rem; /* 12px */
+  font-weight: 400;
+  line-height: 1.4;
+}
+```
+
+### Text Color Application
+- Hero headlines: Use gradient-text class
+- Primary headings: Deep Purple (#5B21B6)
+- Body text: Primary Text (#1F2937)
+- Supporting text: Secondary Text (#6B7280)
+- Hints/placeholders: Tertiary Text (#9CA3AF)
+
+---
+
+## SPACING SYSTEM (8px Grid)
+
+Use consistent spacing based on 8px increments:
+```css
+/* Spacing Scale */
+.spacing-1 { gap/padding/margin: 0.5rem; }  /* 8px */
+.spacing-2 { gap/padding/margin: 1rem; }    /* 16px */
+.spacing-3 { gap/padding/margin: 1.5rem; }  /* 24px */
+.spacing-4 { gap/padding/margin: 2rem; }    /* 32px */
+.spacing-5 { gap/padding/margin: 2.5rem; }  /* 40px */
+.spacing-6 { gap/padding/margin: 3rem; }    /* 48px */
+.spacing-8 { gap/padding/margin: 4rem; }    /* 64px */
+.spacing-12 { gap/padding/margin: 6rem; }   /* 96px */
+```
+
+### Application Guidelines
+- **Between sections**: 64px-96px (spacing-8 to spacing-12)
+- **Card internal padding**: 32px-48px (spacing-4 to spacing-6)
+- **Between form elements**: 24px (spacing-3)
+- **Between related items**: 16px (spacing-2)
+- **Icon-to-text gap**: 8px-12px (spacing-1 to 1.5)
+
+---
+
+## LAYOUT STRUCTURE
+
+### Container Widths
+```css
+.container-full { max-width: 100%; }
+.container-wide { max-width: 1400px; margin: 0 auto; }
+.container-default { max-width: 1200px; margin: 0 auto; }
+.container-narrow { max-width: 800px; margin: 0 auto; }
+.container-form { max-width: 600px; margin: 0 auto; }
+```
+
+### Sidebar Layout (Profile Page - Image 1)
+```css
+.sidebar {
+  width: 240px;
+  background: #FFFFFF;
+  padding: 24px 0;
+  border-right: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+.sidebar-item {
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9375rem; /* 15px */
+  color: #6B7280;
+  transition: all 0.2s ease;
+}
+
+.sidebar-item:hover,
+.sidebar-item.active {
+  color: #7C3AED;
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.main-content {
+  flex: 1;
+  padding: 48px 64px;
+  background: #FAF5FF;
+}
+```
+
+---
+
+## COMPONENT SPECIFICATIONS
+
+### LANDING PAGE (Image 2)
+
+#### Hero Section
+```css
+.hero-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #FAF5FF 0%, #FFFFFF 100%);
+  padding: 96px 24px;
+  text-align: center;
+}
+
+.hero-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 64px;
+}
+
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+  transform: rotate(45deg); /* Diamond shape */
+}
+
+.logo-text {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.hero-headline {
+  font-size: 3.5rem; /* 56px */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subheadline {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 400;
+  color: #6B7280;
+  max-width: 600px;
+  margin: 0 auto 64px;
+  line-height: 1.6;
+}
+```
+
+#### User Type Cards
+```css
+.user-type-container {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  align-items: stretch;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.user-type-card {
+  flex: 1;
+  max-width: 400px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 48px 32px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.08);
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.user-type-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.15);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.user-type-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.icon-job-seeker {
+  background: rgba(124, 58, 237, 0.15);
+}
+
+.icon-hiring-manager {
+  background: rgba(236, 72, 153, 0.15);
+}
+
+.user-type-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.icon-job-seeker svg {
+  color: #7C3AED;
+}
+
+.icon-hiring-manager svg {
+  color: #EC4899;
+}
+
+.user-type-title {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 12px;
+}
+
+.user-type-description {
+  font-size: 1rem; /* 16px */
+  color: #6B7280;
+  line-height: 1.6;
+}
+```
+
+---
+
+### PROFILE PAGE (Image 1)
+
+#### Progress Header
+```css
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+
+.progress-title {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 600;
+  color: #7C3AED;
+}
+
+.progress-status {
+  font-size: 0.875rem; /* 14px */
+  color: #6B7280;
+  font-weight: 500;
+}
+```
+
+#### Profile Completion Card
+```css
+.profile-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 48px;
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.06);
+}
+
+.card-title {
+  font-size: 1.75rem; /* 28px */
+  font-weight: 600;
+  color: #5B21B6;
+  margin-bottom: 40px;
+}
+```
+
+#### Upload Components
+```css
+.upload-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.upload-section-full {
+  grid-column: 1 / -1;
+}
+
+.upload-label {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 500;
+  color: #1F2937;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.required-indicator {
+  color: #EF4444;
+  font-size: 1rem;
+}
+
+.optional-label {
+  font-size: 0.8125rem; /* 13px */
+  color: #9CA3AF;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.upload-box {
+  border: 2px dashed rgba(124, 58, 237, 0.2);
+  border-radius: 16px;
+  padding: 40px 24px;
+  text-align: center;
+  background: rgba(124, 58, 237, 0.02);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-box:hover {
+  border-color: rgba(124, 58, 237, 0.4);
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.upload-box.dragover {
+  border-color: #7C3AED;
+  background: rgba(124, 58, 237, 0.08);
+  transform: scale(1.01);
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+}
+
+.icon-resume {
+  color: #A78BFA;
+}
+
+.icon-cover-letter {
+  color: #EC4899;
+}
+
+.icon-profile-photo {
+  color: #7C3AED;
+}
+
+.icon-certificate {
+  color: #10B981;
+}
+
+.upload-title {
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  color: #1F2937;
+  margin-bottom: 8px;
+}
+
+.upload-instruction {
+  font-size: 0.875rem; /* 14px */
+  color: #6B7280;
+  margin-bottom: 4px;
+}
+
+.upload-file-type {
+  font-size: 0.75rem; /* 12px */
+  color: #9CA3AF;
+}
+```
+
+#### Primary Button (Continue Button)
+```css
+.button-primary {
+  background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+  color: #FFFFFF;
+  font-size: 1rem; /* 16px */
+  font-weight: 600;
+  padding: 16px 48px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+  display: inline-block;
+  text-align: center;
+  margin: 32px auto 0;
+  display: block;
+}
+
+.button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
+}
+
+.button-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+}
+```
+
+---
+
+## SHADOW SYSTEM
+
+Use subtle, layered shadows for depth without harshness:
+```css
+/* Elevation Levels */
+.shadow-sm {
+  box-shadow: 0 1px 2px rgba(124, 58, 237, 0.05);
+}
+
+.shadow-md {
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.06);
+}
+
+.shadow-lg {
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.08);
+}
+
+.shadow-xl {
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.12);
+}
+
+/* Interactive States */
+.shadow-hover {
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.15);
+}
+
+.shadow-focus {
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+}
+```
+
+---
+
+## BORDER RADIUS SYSTEM
+
+Consistent rounded corners create softness:
+```css
+.radius-sm { border-radius: 8px; }   /* Small elements, badges */
+.radius-md { border-radius: 12px; }  /* Buttons, inputs */
+.radius-lg { border-radius: 16px; }  /* Upload boxes, smaller cards */
+.radius-xl { border-radius: 24px; }  /* Large cards, modals */
+.radius-full { border-radius: 9999px; } /* Circular elements, avatars */
+```
+
+---
+
+## ANIMATION & TRANSITIONS
+
+Smooth, natural motion enhances the zen feeling:
+```css
+/* Default Transitions */
+.transition-default {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-fast {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-slow {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Focus States */
+.focus-ring {
+  transition: box-shadow 0.2s ease;
+}
+
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+}
+```
+
+---
+
+## RESPONSIVE BREAKPOINTS
+```css
+/* Mobile First Approach */
+@media (max-width: 640px) {
+  /* Stack layouts, reduce padding, smaller text */
+  .hero-headline { font-size: 2.5rem; }
+  .user-type-container { flex-direction: column; }
+  .upload-grid { grid-template-columns: 1fr; }
+  .sidebar { width: 100%; border-right: none; border-bottom: 1px solid rgba(124, 58, 237, 0.1); }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Tablet adjustments */
+  .hero-headline { font-size: 3rem; }
+  .upload-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1025px) {
+  /* Desktop - use full specifications above */
+}
+```
+
+---
+
+## ACCESSIBILITY REQUIREMENTS
+```css
+/* Focus Indicators */
+*:focus-visible {
+  outline: 2px solid #7C3AED;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Text Contrast */
+/* Ensure all text meets WCAG AA standards */
+/* Primary text on white: #1F2937 (contrast ratio 11.8:1) ✓ */
+/* Secondary text on white: #6B7280 (contrast ratio 4.6:1) ✓ */
+/* Tertiary text on white: #9CA3AF (contrast ratio 2.8:1) - use only for non-essential text */
+
+/* Interactive States */
+button:disabled,
+.upload-box.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+```
+
+---
+
+## ICON SPECIFICATIONS
+
+Use **Lucide Icons** or **Heroicons** (outline style) for consistency:
+
+### Icon Sizes
+```css
+.icon-sm { width: 16px; height: 16px; }
+.icon-md { width: 20px; height: 20px; }
+.icon-lg { width: 24px; height: 24px; }
+.icon-xl { width: 32px; height: 32px; }
+.icon-2xl { width: 48px; height: 48px; }
+```
+
+### Specific Icons Needed
+- **Upload Cloud**: Use for resume/document upload (cloud-upload icon)
+- **Document**: Use for cover letter (file-text icon)
+- **User**: Use for profile photo (user icon)
+- **Shield Check**: Use for certificates (shield-check icon)
+- **User Circle**: Use for job seeker avatar (user-circle icon)
+- **Briefcase**: Use for hiring manager (briefcase icon)
+
+---
+
+## IMPLEMENTATION CHECKLIST
+
+Apply these changes systematically:
+
+1. **Global Styles First**
+   - [ ] Set up color variables
+   - [ ] Configure typography system
+   - [ ] Establish spacing scale
+   - [ ] Define shadow and radius utilities
+
+2. **Layout Structure**
+   - [ ] Create sidebar navigation component
+   - [ ] Set up main content area with proper padding
+   - [ ] Implement responsive container system
+
+3. **Landing Page**
+   - [ ] Build hero section with gradient background
+   - [ ] Create logo component with rotated diamond
+   - [ ] Implement user type selection cards
+   - [ ] Add hover animations
+
+4. **Profile Page**
+   - [ ] Build progress header
+   - [ ] Create upload component system
+   - [ ] Implement file drag-and-drop zones
+   - [ ] Style primary button with gradient
+
+5. **Polish**
+   - [ ] Test all hover states
+   - [ ] Verify responsive behavior
+   - [ ] Check accessibility (keyboard navigation, focus states)
+   - [ ] Ensure consistent spacing throughout
+
+---
+
+## CRITICAL DESIGN NOTES
+
+**DO:**
+- Use generous whitespace - don't be afraid of empty space
+- Keep borders subtle (rgba opacity 0.1-0.2)
+- Apply gradients sparingly - only for key elements
+- Make hover states obvious but smooth
+- Ensure all interactive elements have clear focus states
+- Use the purple-pink gradient ONLY for: hero text, primary buttons, and brand elements
+
+**DON'T:**
+- Overcrowd the interface - one concept per section
+- Use harsh shadows - keep them soft and purple-tinted
+- Apply gradients everywhere - solid colors for most UI
+- Make borders too prominent - they should whisper, not shout
+- Forget hover/active states on interactive elements
+- Use pure black (#000000) - always use warm dark grays
+
+---
+
+## FINAL RESULT SHOULD FEEL LIKE:
+
+- Opening a premium meditation app (calm, spacious)
+- Using Stripe's dashboard (confident, professional)
+- Browsing Notion (intuitive, uncluttered)
+- Interacting with Linear (smooth, delightful)
+
+The design should make users feel: **"This company knows what they're doing. I can trust them with my career."**
+
+Apply these specifications exactly, and the result will match the serene, professional aesthetic of the reference images.
+ADDITIONAL CURSOR-SPECIFIC COMMANDS
+After providing the above prompt to Cursor, you can use these follow-up commands:
+"Apply the SwiftJobs design system to all existing pages"
+"Update the color palette to use the purple-pink gradient scheme"
+"Redesign the navigation sidebar to match Image 1 specifications"
+"Rebuild the landing page hero section using Image 2 as reference"
+"Create reusable upload component with drag-and-drop based on the profile page design"
+"Implement all hover and focus states as specified in the design system"
+"Make the entire app responsive following the mobile-first breakpoints"
+This comprehensive prompt gives Cursor AI everything it needs to transform your frontend into the beautiful, zen design shown in your reference images. 🎨✨
+
+
