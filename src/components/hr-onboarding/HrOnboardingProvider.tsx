@@ -132,9 +132,10 @@ export function HrOnboardingProvider({ children }: { children: ReactNode }) {
     }
     if (currentStep === 1) {
       return (
-        preference.targetRole.trim() !== '' &&
         preference.seniorityLevel !== '' &&
-        preference.location.trim() !== ''
+        preference.remotePolicy !== '' &&
+        preference.salaryMin !== '' &&
+        preference.salaryMax !== ''
       );
     }
     if (currentStep === 2) {

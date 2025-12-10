@@ -29,19 +29,11 @@ export default function HrPreferenceStep() {
       {/* Header matching Applicant UI */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Preference</h1>
-        <p className="text-gray-500 mt-2">Tell us what you’re looking for</p>
+        <p className="text-gray-900 mt-2">Tell us what you're looking for</p>
       </div>
 
       <div className="space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-100">
         
-        {/* 1. Job Title */}
-        <Input
-          label="Job Title"
-          placeholder="e.g. Frontend Engineer"
-          value={preference.targetRole} // We map 'targetRole' to Job Title
-          onChange={(e) => updatePreference('targetRole', e.target.value)}
-        />
-
         {/* 2. Indicate Role (Seniority) - Using Pills */}
         <PillSelector
           label="Indicate Role"
@@ -52,7 +44,7 @@ export default function HrPreferenceStep() {
 
         {/* 3. Expected Salary Range */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-900">
             Expected Salary Range (Per Month)
           </label>
           <div className="flex items-center gap-4">
@@ -66,7 +58,7 @@ export default function HrPreferenceStep() {
                 className="text-center"
               />
             </div>
-            <div className="text-gray-400 font-medium">—</div>
+            <div className="text-gray-900 font-medium">—</div>
             <div className="flex-1">
               <Input 
                 label="" 
@@ -78,7 +70,7 @@ export default function HrPreferenceStep() {
               />
             </div>
           </div>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-900">
             Enter the monthly base salary range.
           </p>
         </div>
@@ -90,16 +82,6 @@ export default function HrPreferenceStep() {
           value={preference.remotePolicy} // Maps to remotePolicy
           onChange={(val) => updatePreference('remotePolicy', val)}
         />
-        
-        {/* Location Input (Only show if NOT Remote) */}
-        {preference.remotePolicy !== 'Remote' && (
-           <Input
-             label="Office Location"
-             placeholder="e.g. Singapore, CBD"
-             value={preference.location}
-             onChange={(e) => updatePreference('location', e.target.value)}
-           />
-        )}
 
       </div>
 
