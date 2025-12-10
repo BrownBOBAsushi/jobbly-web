@@ -107,7 +107,7 @@ export default function BehaviourPage() {
           onClick={handleFinish}
           className="px-8 py-3 text-lg font-semibold rounded-lg bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition-all"
         >
-          Save & Finish
+          Save & Start Matching
         </button>
       </footer>
     </div>
